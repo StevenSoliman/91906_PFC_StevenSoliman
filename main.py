@@ -2,7 +2,8 @@ from tkinter import *
 
 class Converter():
    """
-   Personal Finance Calculator with multiple financial tools
+   Personal Finance Calculator with multiple
+    financial tools
    """
 
 
@@ -67,7 +68,8 @@ class Converter():
            self.button_ref_list.append(self.make_button)
 
            # Retrieve 'history / export' button and disable it at the start
-           self.to_history_button = self.button_ref_list[3].config(state=DISABLED)
+           self.to_history_button = (self.button_ref_list[3])
+           self.to_history_button.config(state=DISABLED)
 
 # main routine
 if __name__ == "__main__":
