@@ -1,4 +1,5 @@
 from tkinter import *
+from flask import Flask
 
 class Converter():
    """
@@ -11,7 +12,7 @@ class Converter():
        Finance Calculator GUI
        """
 
-       self.finance_frame = Frame(padx=10, pady=10)
+       self.finance_frame = Frame(padx=40, pady=40)
        self.finance_frame.grid()
 
        self.finance_heading = Label(self.finance_frame,
@@ -19,7 +20,7 @@ class Converter():
                                     font=("Arial", "16", "bold"))
        self.finance_heading.grid(row=0)
 
-       instructions = ("Please select a calculator type from the dropdown menu below, "
+       instructions = ("Please select a calculator type from the dropdown menu below "
                        "and a currency from the dropdown beside it. Enter the required value "
                        "in the field below, then press 'Calculate' to see your results.")
        self.finance_instructions = Label(self.finance_frame,
@@ -61,6 +62,14 @@ class Converter():
 
        # Retrieve 'history / export' button and disable it at the start
        self.to_history_button = self.button_ref_list[3].config(state=DISABLED)
+
+       def to_help(self):
+           """
+           Open help dialogue box and display help button
+           (so that users can't create multiple help boxes).
+           As a (i)
+           """
+           DisplayHelp(self)
 
 
 # main routine
