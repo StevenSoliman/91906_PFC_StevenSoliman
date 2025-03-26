@@ -1,17 +1,17 @@
 from tkinter import *
 from functools import partial
 
-class Converter:
+class FinanceCalculator:
     """
-        Temperature conversion tool (°C to °F or °F to °C)
-        """
+    Temperature conversion tool (°C to °F or °F to °C)
+    """
 
     def __init__(self):
         """
         Temperature converter GUI
         """
 
-        self.temp_frame = Frame(padx=10, pady=10)
+        self.temp_frame = Frame(padx=50, pady=50)
         self.temp_frame.grid()
 
         self.to_help_button = Button(self.temp_frame,
@@ -87,6 +87,6 @@ class DisplayHelp:
 # Main routine
 if __name__ == "__main__":
     root = Tk()
-    root.title("Temperature Converter")
-    Converter()
+    root.title("Finance Calculator")
+    FinanceCalculator()
     root.mainloop()
