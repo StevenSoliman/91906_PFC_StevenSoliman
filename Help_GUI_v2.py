@@ -11,17 +11,23 @@ class FinanceCalculator:
         Temperature converter GUI
         """
 
-        self.temp_frame = Frame(padx=50, pady=50)
+        self.temp_frame = Frame(padx=20, pady=20)
         self.temp_frame.grid()
 
-        self.to_help_button = Button(self.temp_frame,
-                                     text="i",
-                                     bg="#CC6600",
-                                     fg="#ffffff",
-                                     font=("Arial", "14", "bold"), width=12,
-                                     command=self.to_help)
-        self.to_help_button.grid(row=1, padx=5, pady=5)
+        # Create a canvas for the circular button
+        self.button_canvas = Canvas(self.temp_frame, width=30, height=30)
+        self.button_canvas.grid(row=1, padx=5, pady=5)
 
+        # Draw the circular button
+        self.circle = self.button_canvas.create_oval(5, 5, 25, 25,
+                                                     fill="#000000",
+                                                     outline="#000000")
+
+        # Add the "i" text
+        self.button_text = self.button_canvas.create_text(15, 15,
+                                                          text="i",
+                                                          fill="#ffffff",
+                                                          font=("Arial", "14", "bold"))
 
     def to_help(self):
         """

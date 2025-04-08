@@ -1,7 +1,8 @@
 from tkinter import *
+from functools import partial
+from tkinter import ttk, messagebox
 
-
-class FinanceCalculator():
+class FinanceCalculator:
    """
    Finance Calculator with multiple financial tools
    """
@@ -14,23 +15,43 @@ class FinanceCalculator():
        self.finance_frame = Frame(padx=40, pady=40)
        self.finance_frame.grid()
 
+       #Heading
        self.finance_heading = Label(self.finance_frame,
                                     text="Finance Calculator",
                                     font=("Arial", "16", "bold"))
        self.finance_heading.grid(row=0)
 
-       instructions = ("Please select a calculator type from the dropdown menu below "
-                       "and a currency from the dropdown beside it. Enter the required value "
-                       "in the field below, then press 'Calculate' to see your results.")
+       #Intructions
+       instructions = ("Use the tabs below to access different financial calculators. "
+                        "Enter the required information and press the calculate button.")
        self.finance_instructions = Label(self.finance_frame,
                                          text=instructions,
                                          wraplength=250, width=40,
                                          justify="left")
        self.finance_instructions.grid(row=1)
 
+       # Create notebook (tabbed interface)
+       self.notebook = ttk.Notebook(self.finance_frame)
+       self.notebook.grid(row=2, padx=10, pady=10)
+
+       # Create tabs
+       self.loan_tab = self.create_loan_tab()
+       self.mortgage_tab = self.create_mortgage_tab()
+       self.investment_tab = self.create_investment_tab()
+       self.retirement_tab = self.create_retirement_tab()
+       self.budget_tab = self.create_budget_tab()
+
+       # Add tabs to notebook
+       self.notebook.add(self.loan_tab, text="Loan Calculator")
+       self.notebook.add(self.mortgage_tab, text="Mortgage Calculator")
+       self.notebook.add(self.investment_tab, text="Investment Projector")
+       self.notebook.add(self.retirement_tab, text="Retirement Planner")
+       self.notebook.add(self.budget_tab, text="Budget Allocator")
+
+
        self.finance_entry = Entry(self.finance_frame,
                               font=("Arial", "14"))
-       self.finance_entry.grid(row=2, padx=10, pady=10)
+       self.finance_entry.grid(row=6, padx=10, pady=10)
 
        error = "Please enter a number"
        self.finance_error = Label(self.finance_frame, text=error, fg="#004C99",
