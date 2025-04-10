@@ -1,6 +1,9 @@
 from tkinter import *
 from functools import partial
 
+from Sandbox import CircleButton
+
+
 class FinanceCalculator:
     """
     Temperature conversion tool (°C to °F or °F to °C)
@@ -11,23 +14,16 @@ class FinanceCalculator:
         Temperature converter GUI
         """
 
-        self.temp_frame = Frame(padx=20, pady=20)
+        self.temp_frame = Frame(padx=50, pady=50)
         self.temp_frame.grid()
 
-        # Create a canvas for the circular button
-        self.button_canvas = Canvas(self.temp_frame, width=30, height=30)
-        self.button_canvas.grid(row=1, padx=5, pady=5)
+        self.to_help_button = CircleButton(self.temp_frame,
+                                     text="i",
+                                     bg="#000000",
+                                     fg="#ffffff",
+                                     command=self.to_help)
+        self.to_help_button.grid(row=1, padx=5, pady=5)
 
-        # Draw the circular button
-        self.circle = self.button_canvas.create_oval(5, 5, 25, 25,
-                                                     fill="#000000",
-                                                     outline="#000000")
-
-        # Add the "i" text
-        self.button_text = self.button_canvas.create_text(15, 15,
-                                                          text="i",
-                                                          fill="#ffffff",
-                                                          font=("Arial", "14", "bold"))
 
     def to_help(self):
         """
@@ -52,13 +48,49 @@ class DisplayHelp:
         self.help_frame = Frame(self.help_box, width=300,height=200)
         self.help_frame.grid()
 
-        self.help_heading_label = Label(self.help_frame, text="I",
+        self.help_heading_label = Label(self.help_frame, text="Info for '' ",
                                         font=("Arial", "14", "bold"))
         self.help_heading_label.grid(row=0)
 
-        help_text = ""
+        help_text = """                       Welcome to the Finance Calculator!
 
-        self.help_text_label = Label(self.help_frame, text=help_text, wraplength=350,
+        This application provides five specialized financial tools:
+
+        1. Loan Calculator:
+        - Calculate loan payments, interest costs, and amortization schedules
+        - Enter loan amount, interest rate, and term
+        - View detailed repayment breakdown
+
+        2. Mortgage Calculator:
+        - Estimate monthly mortgage payments
+        - Compare different loan terms and rates
+        - See principal vs interest breakdown
+
+        3. Investment Projector:
+        - Forecast investment growth over time
+        - Compare different contribution strategies
+        - Visualize compound interest effects
+
+        4. Retirement Planner:
+        - Estimate retirement savings needs
+        - Project savings growth until retirement
+        - Calculate sustainable withdrawal rates
+
+        5. Budget Allocator:
+        - Create and analyze personal budgets
+        - Track income vs expenses
+        - Identify savings opportunities
+
+        General Usage:
+        - Select the desired calculator tab
+        - Enter all required values in the input fields
+        - Press 'Calculate' to see results
+        - Use 'History/Export' to save your calculations
+
+        Note: All calculations are estimates only. For professional 
+        financial advice, please consult a qualified advisor."""
+
+        self.help_text_label = Label(self.help_frame, text=help_text, wraplength=550,
                                         justify="left")
         self.help_text_label.grid(row=1, padx=10)
 
@@ -69,7 +101,8 @@ class DisplayHelp:
                                      command=partial(self.close_help, partner))
         self.dismiss_button.grid(row=2, padx=10, pady=10)
 
-        recolour_list = [self.help_frame, self.help_heading_label, self.help_text_label, self.dismiss_button]
+        recolour_list = [self.help_frame, self.help_heading_label,
+                         self.help_text_label]
         for item in recolour_list:
             item.config(bg=background)
 

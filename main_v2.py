@@ -65,7 +65,7 @@ class FinanceCalculator:
        button_details_list = [
            ["To Calculate", "#990099", "", 0, 0],
            [" ?? ", "#009900", "", 0, 1],
-           ["Help / Info", "#CC6600", "", 1, 0],
+           ["i", "#CC6600", "", 1, 0],
            ["History / Export", "#004C99", "", 1, 1]
        ]
 
@@ -107,19 +107,49 @@ class DisplayHelp:
         self.help_frame = Frame(self.help_box, width=300,height=200)
         self.help_frame.grid()
 
-        self.help_heading_label = Label(self.help_frame, text="Help / Info",
+        self.help_heading_label = Label(self.help_frame, text="Info for '' ",
                                         font=("Arial", "14", "bold"))
         self.help_heading_label.grid(row=0)
 
-        help_text = "To use this program simply enter a temperature  " \
-                     "you wish to convert and then press the button " \
-                     "to either convert from Celsius (centigrade) or Fahrenheit. \n\n" \
-                     "Note that -273 degree C" \
-                     "is the absolute zero and -459.67 degree F is the (coldest temperature as possible)." \
-                    "If you try to convert temperatures below this limit you will receive an error. \n\n" \
-                    "To see your calculation history and export it to a text file, press the 'History / Export' button."
+        help_text = """                       Welcome to the Finance Calculator!
 
-        self.help_text_label = Label(self.help_frame, text=help_text, wraplength=350,
+        This application provides five specialized financial tools:
+
+        1. Loan Calculator:
+        - Calculate loan payments, interest costs, and amortization schedules
+        - Enter loan amount, interest rate, and term
+        - View detailed repayment breakdown
+
+        2. Mortgage Calculator:
+        - Estimate monthly mortgage payments
+        - Compare different loan terms and rates
+        - See principal vs interest breakdown
+
+        3. Investment Projector:
+        - Forecast investment growth over time
+        - Compare different contribution strategies
+        - Visualize compound interest effects
+
+        4. Retirement Planner:
+        - Estimate retirement savings needs
+        - Project savings growth until retirement
+        - Calculate sustainable withdrawal rates
+
+        5. Budget Allocator:
+        - Create and analyze personal budgets
+        - Track income vs expenses
+        - Identify savings opportunities
+
+        General Usage:
+        - Select the desired calculator tab
+        - Enter all required values in the input fields
+        - Press 'Calculate' to see results
+        - Use 'History/Export' to save your calculations
+
+        Note: All calculations are estimates only. For professional 
+        financial advice, please consult a qualified advisor."""
+
+        self.help_text_label = Label(self.help_frame, text=help_text, wraplength=550,
                                         justify="left")
         self.help_text_label.grid(row=1, padx=10)
 
@@ -130,7 +160,8 @@ class DisplayHelp:
                                      command=partial(self.close_help, partner))
         self.dismiss_button.grid(row=2, padx=10, pady=10)
 
-        recolour_list = [self.help_frame, self.help_heading_label, self.help_text_label, self.dismiss_button]
+        recolour_list = [self.help_frame, self.help_heading_label,
+                         self.help_text_label]
         for item in recolour_list:
             item.config(bg=background)
 
@@ -142,6 +173,7 @@ class DisplayHelp:
         #put help button to normal
         partner.to_help_button.config(state=NORMAL)
         self.help_box.destroy()
+
 
 
 # main routine
