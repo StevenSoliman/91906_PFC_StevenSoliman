@@ -15,7 +15,7 @@ class FinanceCalculator:
         self.temp_frame.grid()
 
         self.to_help_button = Button(self.temp_frame,
-                                     text="i",
+                                     text="Help/Info",
                                      bg="#CC6600",
                                      fg="#ffffff",
                                      font=("Arial", "14", "bold"), width=12,
