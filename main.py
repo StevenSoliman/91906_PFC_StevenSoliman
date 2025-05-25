@@ -16,6 +16,7 @@ class PersonalFinanceCalculator:
         Initialize Finance Calculator GUI
         """
         self.root = root
+        self.calculation_history = []  # Store calculation history
         self.setup_main_frame()
         self.create_header()
         self.create_notebook()
@@ -144,26 +145,71 @@ class PersonalFinanceCalculator:
             button.grid(row=item[3], column=item[4], padx=10, pady=5)
             self.button_ref_list.append(button)
 
-        # Disable history button initially
-        self.button_ref_list[1].config(state=DISABLED)
+    def add_to_history(self, calculation_string):
+        """Add a calculation to the history"""
+        today = date.today().strftime("%d/%m/%Y")
+        history_entry = f"[{today}] {calculation_string}"
+        self.calculation_history.append(history_entry)
 
     def get_current_tab_name(self):
         """Get the name of currently selected tab"""
         current_tab = self.notebook.index(self.notebook.select())
         return self.notebook.tab(current_tab, option="text")
 
-    def validate_inputs(self, tab_name, required_fields):
-        """Validate input fields for calculations"""
+    def validate_inputs(self, tab_name, required_fields, field_types=None):
+        """Validate input fields for calculations with user-friendly error messages"""
         values = []
-        for field in required_fields:
-            try:
-                value = float(self.entries[tab_name][field].get())
-                if value < 0:
-                    raise ValueError("Negative values not allowed")
-                values.append(value)
-            except ValueError:
-                messagebox.showerror("Input Error", f"Please enter a valid positive number for {field}")
+
+        for i, field in enumerate(required_fields):
+            field_value = self.entries[tab_name][field].get().strip()
+
+            # Check if field is empty
+            if not field_value:
+                error_msg = f"❌ Please enter a value for {field}"
+                self.result_labels[tab_name].config(text=error_msg, fg="#CC0000")
                 return None
+
+            try:
+                value = float(field_value)
+
+                # Check for negative values
+                if value < 0:
+                    error_msg = f"❌ {field} cannot be negative. Please enter a positive number."
+                    self.result_labels[tab_name].config(text=error_msg, fg="#CC0000")
+                    return None
+
+                # Special validation for percentages
+                if "%" in field:
+                    if value > 100:
+                        error_msg = f"❌ {field} seems too high ({value}%). Please check your percentage."
+                        self.result_labels[tab_name].config(text=error_msg, fg="#CC0000")
+                        return None
+                    if "Interest Rate" in field and value > 50:
+                        error_msg = f"❌ Interest rate of {value}% seems unusually high. Please verify."
+                        self.result_labels[tab_name].config(text=error_msg, fg="#CC0000")
+                        return None
+
+                # Special validation for ages
+                if "Age" in field:
+                    if value < 16 or value > 120:
+                        error_msg = f"❌ {field} of {int(value)} seems unrealistic. Please enter a valid age."
+                        self.result_labels[tab_name].config(text=error_msg, fg="#CC0000")
+                        return None
+
+                # Special validation for years/terms
+                if "Term" in field or "Period" in field:
+                    if value > 50:
+                        error_msg = f"❌ {field} of {int(value)} years seems too long. Please check your input."
+                        self.result_labels[tab_name].config(text=error_msg, fg="#CC0000")
+                        return None
+
+                values.append(value)
+
+            except ValueError:
+                error_msg = f"❌ Please enter numbers only for {field}. Remove any letters or symbols."
+                self.result_labels[tab_name].config(text=error_msg, fg="#CC0000")
+                return None
+
         return values
 
     def calculate_loan(self):
@@ -186,8 +232,13 @@ class PersonalFinanceCalculator:
 
                 self.result_labels[tab_name].config(text=result_text, fg="#0066CC")
 
+                # Add to history
+                history_entry = f"Loan: Amount: {calc.format_nz_currency(principal)}, Rate: {annual_rate}%, Term: {int(years)} years → Monthly: {calc.format_nz_currency(monthly_payment)}"
+                self.add_to_history(history_entry)
+
             except Exception as e:
-                messagebox.showerror("Calculation Error", f"Error calculating loan: {str(e)}")
+                error_msg = f"❌ Calculation error: Unable to process your loan details. Please check your inputs."
+                self.result_labels[tab_name].config(text=error_msg, fg="#CC0000")
 
     def calculate_mortgage(self):
         """Calculate mortgage payment using NZ-specific calculations"""
@@ -198,8 +249,10 @@ class PersonalFinanceCalculator:
         if values:
             home_price, down_payment, annual_rate, years = values
 
+            # Custom validation for mortgage
             if down_payment >= home_price:
-                messagebox.showerror("Input Error", "Down payment cannot be greater than or equal to home price")
+                error_msg = "❌ Down payment cannot be equal to or greater than the home price."
+                self.result_labels[tab_name].config(text=error_msg, fg="#CC0000")
                 return
 
             try:
@@ -207,7 +260,7 @@ class PersonalFinanceCalculator:
                     home_price, down_payment, annual_rate, years
                 )
 
-                lvr_warning = " ⚠️ LMI Required" if mortgage_details['requires_lmi'] else ""
+                lvr_warning = " (LMI Required)" if mortgage_details['requires_lmi'] else ""
 
                 result_text = (f"Monthly Payment: {calc.format_nz_currency(mortgage_details['monthly_payment'])}\n"
                                f"+ Insurance: {calc.format_nz_currency(mortgage_details['insurance_monthly'])}\n"
@@ -217,8 +270,13 @@ class PersonalFinanceCalculator:
 
                 self.result_labels[tab_name].config(text=result_text, fg="#0066CC")
 
+                # Add to history
+                history_entry = f"Mortgage: Home: {calc.format_nz_currency(home_price)}, Down: {calc.format_nz_currency(down_payment)}, Rate: {annual_rate}% → Monthly: {calc.format_nz_currency(mortgage_details['total_monthly_payment'])}, LVR: {mortgage_details['lvr']:.1f}%"
+                self.add_to_history(history_entry)
+
             except Exception as e:
-                messagebox.showerror("Calculation Error", f"Error calculating mortgage: {str(e)}")
+                error_msg = f"❌ Calculation error: Unable to process your mortgage details. Please check your inputs."
+                self.result_labels[tab_name].config(text=error_msg, fg="#CC0000")
 
     def calculate_investment(self):
         """Calculate investment growth using NZ-specific calculations with tax considerations"""
@@ -243,8 +301,13 @@ class PersonalFinanceCalculator:
 
                 self.result_labels[tab_name].config(text=result_text, fg="#0066CC")
 
+                # Add to history
+                history_entry = f"Investment: Initial: {calc.format_nz_currency(initial_investment)}, Annual: {calc.format_nz_currency(annual_contribution)}, Return: {annual_return_rate}%, Period: {int(years)} years → Final: {calc.format_nz_currency(investment_details['final_value'])}"
+                self.add_to_history(history_entry)
+
             except Exception as e:
-                messagebox.showerror("Calculation Error", f"Error calculating investment: {str(e)}")
+                error_msg = f"❌ Calculation error: Unable to process your investment details. Please check your inputs."
+                self.result_labels[tab_name].config(text=error_msg, fg="#CC0000")
 
     def calculate_retirement(self):
         """Calculate KiwiSaver retirement projection"""
@@ -256,12 +319,16 @@ class PersonalFinanceCalculator:
         if values:
             current_age, retirement_age, current_balance, annual_salary, employee_rate, expected_return = values
 
+            # Custom validation for retirement
             if retirement_age <= current_age:
-                messagebox.showerror("Input Error", "Retirement age must be greater than current age")
+                error_msg = f"❌ Retirement age ({int(retirement_age)}) must be greater than current age ({int(current_age)})."
+                self.result_labels[tab_name].config(text=error_msg, fg="#CC0000")
                 return
 
+            # Show warning for early retirement (but don't block calculation)
+            warning_text = ""
             if retirement_age < 65:
-                messagebox.showwarning("NZ Super Warning", "Note: NZ Super is available from age 65")
+                warning_text = "\n⚠️ Note: NZ Super is available from age 65"
 
             try:
                 retirement_details = calc.calculate_kiwisaver_retirement(
@@ -277,12 +344,17 @@ class PersonalFinanceCalculator:
                     f"Annual NZ Super: {calc.format_nz_currency(retirement_details['annual_nz_super'])}\n"
                     f"Sustainable Withdrawal: {calc.format_nz_currency(retirement_details['sustainable_annual_withdrawal'])}\n"
                     f"Total Annual Income: {calc.format_nz_currency(total_annual_income)}\n"
-                    f"Years to Retirement: {retirement_details['years_to_retirement']}")
+                    f"Years to Retirement: {retirement_details['years_to_retirement']}{warning_text}")
 
                 self.result_labels[tab_name].config(text=result_text, fg="#0066CC")
 
+                # Add to history
+                history_entry = f"Retirement: Age: {int(current_age)}→{int(retirement_age)}, Balance: {calc.format_nz_currency(current_balance)}, Salary: {calc.format_nz_currency(annual_salary)} → Retirement Balance: {calc.format_nz_currency(retirement_details['projected_balance'])}"
+                self.add_to_history(history_entry)
+
             except Exception as e:
-                messagebox.showerror("Calculation Error", f"Error calculating retirement: {str(e)}")
+                error_msg = f"❌ Calculation error: Unable to process your retirement details. Please check your inputs."
+                self.result_labels[tab_name].config(text=error_msg, fg="#CC0000")
 
     def to_help(self):
         """Open help dialogue box"""
@@ -333,7 +405,13 @@ class PersonalFinanceCalculator:
 
     def to_history(self):
         """Handle history/export functionality"""
-        messagebox.showinfo("Coming Soon", "History and Export functionality will be available in a future update.")
+        if not self.calculation_history:
+            # Show inline message instead of popup
+            current_tab = self.get_current_tab_name()
+            error_msg = "📝 No calculations saved yet. Perform some calculations first to see your history."
+            self.result_labels[current_tab].config(text=error_msg, fg="#FF8800")
+        else:
+            HistoryExport(self, self.calculation_history)
 
 
 class DisplayHelp:
@@ -399,7 +477,8 @@ class HistoryExport:
 
         # Determine background color and calculation display
         calc_back = "#D5E8D4" if len(calculations) <= c.MAX_FINANCE_CALCS else "#ffe6cc"
-        calc_amount = "all your" if len(calculations) <= c.MAX_FINANCE_CALCS else f"your recent calculations - showing {c.MAX_FINANCE_CALCS} / {len(calculations)}"
+        calc_amount = "all your" if len(
+            calculations) <= c.MAX_FINANCE_CALCS else f"your recent calculations - showing {c.MAX_FINANCE_CALCS} / {len(calculations)}"
 
         recent_intro_txt = f"Below are {calc_amount} financial calculations"
 
@@ -416,7 +495,7 @@ class HistoryExport:
         history_labels_list = [
             ["Finance History / Export", ("Arial", 16, "bold"), None],
             [recent_intro_txt, ("Arial", 11), None],
-            [newest_first_string, ("Arial", 14), calc_back],
+            [newest_first_string, ("Arial", 11), calc_back],  # Reduced font size from 14 to 11
             [export_instruction_txt, ("Arial", 11), None],
         ]
 
@@ -424,9 +503,9 @@ class HistoryExport:
         for count, item in enumerate(history_labels_list):
             make_label = Label(
                 self.history_frame, text=item[0], font=item[1],
-                bg=item[2], wraplength=300, justify="left", padx=20, pady=10
+                bg=item[2], wraplength=400, justify="left", padx=15, pady=8  # Increased wraplength, reduced padding
             )
-            make_label.grid(row=count)
+            make_label.grid(row=count, padx=10, pady=5)  # Added grid padding for better spacing
             history_labels_ref.append(make_label)
 
         self.export_filename_label = history_labels_ref[3]
@@ -459,26 +538,34 @@ class HistoryExport:
 
         file_name = f"finance_{year}_{month}_{day}"
 
-        success_string = f"Export successful. The file is called {file_name}.txt"
-        self.export_filename_label.config(fg="#009900", text=success_string,
-                                          font=("Arial", "12", "bold"))
-
         write_to = f"{file_name}.txt"
 
-        with open(write_to, "w") as text_file:
-            text_file.write("***** Personal Finance Calculations *****\n")
-            text_file.write(f"Generated: {day}/{month}/{year}\n\n")
-            text_file.write("Here is your calculation history (oldest to newest)...\n")
+        try:
+            with open(write_to, "w") as text_file:
+                text_file.write("***** Personal Finance Calculations *****\n")
+                text_file.write(f"Generated: {day}/{month}/{year}\n\n")
+                text_file.write("Here is your calculation history (oldest to newest)...\n\n")
 
-            # Write calculations in chronological order (oldest first)
-            for item in calculations:
-                text_file.write(item)
-                text_file.write("\n")
+                # Write calculations in chronological order (oldest first)
+                for item in calculations:
+                    text_file.write(item)
+                    text_file.write("\n")
+
+            # Show success message
+            success_string = f"✅ Export successful! File saved as {file_name}.txt"
+            self.export_filename_label.config(fg="#009900", text=success_string,
+                                              font=("Arial", "11", "bold"))
+
+        except Exception as e:
+            error_string = f"❌ Export failed: {str(e)}"
+            self.export_filename_label.config(fg="#CC0000", text=error_string,
+                                              font=("Arial", "11", "bold"))
 
     def close_history(self, partner):
         """Close history dialog and re-enable history button"""
         partner.button_ref_list[1].config(state=NORMAL)
         self.history_box.destroy()
+
 
 # Main execution
 if __name__ == "__main__":
