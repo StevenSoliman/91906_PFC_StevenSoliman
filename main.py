@@ -107,10 +107,10 @@ class PersonalFinanceCalculator:
                 entry.grid(row=i, column=1, padx=5, pady=5)
                 self.entries[tab_name][field_name] = entry
 
-            # Create calculate button (centered)
+            # Create calculate button (centered) - Updated color to #990099
             calc_button = Button(input_frame,
                                  text=config["button_text"],
-                                 bg="#0066CC", fg="white",
+                                 bg="#990099", fg="white",
                                  font=("Arial", 12, "bold"),
                                  command=config["command"],
                                  width=20)
@@ -495,7 +495,7 @@ class HistoryExport:
         history_labels_list = [
             ["Finance History / Export", ("Arial", 16, "bold"), None],
             [recent_intro_txt, ("Arial", 11), None],
-            [newest_first_string, ("Arial", 11), calc_back],  # Reduced font size from 14 to 11
+            [newest_first_string, ("Arial", 11), calc_back],
             [export_instruction_txt, ("Arial", 11), None],
         ]
 
@@ -503,9 +503,9 @@ class HistoryExport:
         for count, item in enumerate(history_labels_list):
             make_label = Label(
                 self.history_frame, text=item[0], font=item[1],
-                bg=item[2], wraplength=400, justify="left", padx=15, pady=8  # Increased wraplength, reduced padding
+                bg=item[2], wraplength=400, justify="left", padx=15, pady=8
             )
-            make_label.grid(row=count, padx=10, pady=5)  # Added grid padding for better spacing
+            make_label.grid(row=count, padx=10, pady=5)
             history_labels_ref.append(make_label)
 
         self.export_filename_label = history_labels_ref[3]
@@ -538,28 +538,22 @@ class HistoryExport:
 
         file_name = f"finance_{year}_{month}_{day}"
 
+        success_string = ("Export successful. The file is called" 
+                          f" {file_name}.txt")
+        self.export_filename_label.config(fg="#009900", text=success_string,
+                                          font=("Arial", "12", "bold"))
+
         write_to = f"{file_name}.txt"
 
-        try:
-            with open(write_to, "w") as text_file:
-                text_file.write("***** Personal Finance Calculations *****\n")
-                text_file.write(f"Generated: {day}/{month}/{year}\n\n")
-                text_file.write("Here is your calculation history (oldest to newest)...\n\n")
+        with open(write_to, "w", encoding='utf-8') as text_file:
+            text_file.write("***** Personal Finance Calculations *****\n")
+            text_file.write(f"Generated: {day}/{month}/{year}\n\n")
+            text_file.write("Here is your calculation history (oldest to newest)...\n\n")
 
-                # Write calculations in chronological order (oldest first)
-                for item in calculations:
-                    text_file.write(item)
-                    text_file.write("\n")
-
-            # Show success message
-            success_string = f"✅ Export successful! File saved as {file_name}.txt"
-            self.export_filename_label.config(fg="#009900", text=success_string,
-                                              font=("Arial", "11", "bold"))
-
-        except Exception as e:
-            error_string = f"❌ Export failed: {str(e)}"
-            self.export_filename_label.config(fg="#CC0000", text=error_string,
-                                              font=("Arial", "11", "bold"))
+            # Write calculations in chronological order (oldest first)
+            for item in calculations:
+                text_file.write(item)
+                text_file.write("\n")
 
     def close_history(self, partner):
         """Close history dialog and re-enable history button"""
