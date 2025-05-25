@@ -1,0 +1,6 @@
+# Finance Calculator Constants
+MAX_FINANCE_CALCS = 5
+MIN_LOAN_AMOUNT = 1000
+MAX_LOAN_TERM = 30
+MIN_INTEREST_RATE = 0.1
+EXPORT_FILE_PREFIX = "finance_calculations"

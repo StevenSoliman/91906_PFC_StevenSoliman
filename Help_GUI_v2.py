@@ -88,32 +88,41 @@ class FinanceCalculator:
 
         help_texts = {
             "Loan Calculator": (
-                "Loan Calculator Instructions:\n"
-                "- Enter the loan amount you want to borrow.\n"
-                "- Enter the annual interest rate (in %).\n"
-                "- Enter the loan term in years.\n"
-                "- Click 'Calculate Loan Payment' to see your estimated monthly payment."
+                "Loan Calculator Instructions:\n\n"
+                "• Enter the loan amount you want to borrow (NZD)\n"
+                "• Enter the annual interest rate (in %)\n"
+                "• Enter the loan term in years\n"
+                "• Click 'Calculate Loan Payment' to see your monthly payment, total interest, and total amount\n\n"
+                "Results include NZ currency formatting and comprehensive payment breakdown."
             ),
             "Mortgage Calculator": (
-                "Mortgage Calculator Instructions:\n"
-                "- Enter the mortgage amount.\n"
-                "- Enter the annual interest rate (in %).\n"
-                "- Enter the mortgage term in years.\n"
-                "- Click 'Calculate Mortgage Payment' to see your estimated monthly payment."
+                "Mortgage Calculator Instructions:\n\n"
+                "• Enter the total home price (NZD)\n"
+                "• Enter your down payment amount (NZD)\n"
+                "• Enter the annual interest rate (in %)\n"
+                "• Enter the mortgage term in years\n"
+                "• Click 'Calculate Mortgage Payment' to see detailed breakdown\n\n"
+                "Results include LVR calculation, insurance estimates, and LMI requirements for NZ mortgages."
             ),
             "Investment Projector": (
-                "Investment Calculator Instructions:\n"
-                "- Enter your initial investment amount.\n"
-                "- Enter the expected annual interest rate (in %).\n"
-                "- Enter the number of years you plan to invest.\n"
-                "- Click 'Calculate Future Value' to see your investment growth."
+                "Investment Calculator Instructions:\n\n"
+                "• Enter your initial investment amount (NZD)\n"
+                "• Enter how much you'll contribute annually (NZD)\n"
+                "• Enter the expected annual return rate (in %)\n"
+                "• Enter the investment period in years\n"
+                "• Click 'Calculate Future Value' to see growth projection\n\n"
+                "Results include PIE tax considerations (28% rate) for accurate NZ projections."
             ),
             "Retirement Planner": (
-                "Retirement Calculator Instructions:\n"
-                "- Enter your current age.\n"
-                "- Enter your desired retirement age.\n"
-                "- Enter your expected annual return (in %).\n"
-                "- Click 'Calculate Retirement Needs' to see your retirement planning details."
+                "KiwiSaver Retirement Calculator Instructions:\n\n"
+                "• Enter your current age\n"
+                "• Enter your desired retirement age (NZ Super available from 65)\n"
+                "• Enter your current KiwiSaver balance (NZD)\n"
+                "• Enter your current annual salary (NZD)\n"
+                "• Enter your KiwiSaver contribution rate (3%, 4%, 6%, 8%, or 10%)\n"
+                "• Enter expected annual return rate (in %)\n"
+                "• Click 'Calculate KiwiSaver Projection' for detailed retirement planning\n\n"
+                "Includes employer contributions, government contributions, NZ Super estimates, and sustainable withdrawal calculations."
             )
         }
 
@@ -145,7 +154,7 @@ class DisplayHelp:
                                      command=partial(self.close_help, partner))
         self.dismiss_button.grid(row=2, padx=10, pady=10)
 
-        for item in [self.help_frame, self.help_heading_label, self.help_text_label, self.dismiss_button]:
+        for item in [self.help_frame, self.help_heading_label, self.help_text_label]:
             item.config(bg=background)
 
     def close_help(self, partner):
