@@ -1,0 +1,13 @@
+***** Personal Finance Calculations *****
+Generated: 28/05/2025
+
+Here is your calculation history (oldest to newest)...
+
+[28/05/2025] Mortgage: Home: $11.00 NZD, Down: $1.00 NZD, Rate: 50.0% → Monthly: $1.08 NZD, LVR: 90.9%
+[28/05/2025] Investment: Initial: $1.00 NZD, Annual: $1.00 NZD, Return: 51.0%, Period: 1 years → Final: $2.37 NZD
+[28/05/2025] Investment: Initial: $1.00 NZD, Annual: $1.00 NZD, Return: 59.0%, Period: 1 years → Final: $2.42 NZD
+[28/05/2025] Investment: Initial: $1.00 NZD, Annual: $1.00 NZD, Return: 99.0%, Period: 1 years → Final: $2.71 NZD
+[28/05/2025] Investment: Initial: $1.00 NZD, Annual: $1.00 NZD, Return: 99.0%, Period: 1 years → Final: $2.71 NZD
+[28/05/2025] Investment: Initial: $1.00 NZD, Annual: $1.00 NZD, Return: 100.0%, Period: 1 years → Final: $2.72 NZD
+[28/05/2025] Investment: Initial: $1.00 NZD, Annual: $1.00 NZD, Return: 100.0%, Period: 1 years → Final: $2.72 NZD
+[28/05/2025] Loan: Amount: $10.00 NZD, Rate: 40.0%, Term: 4 years → Monthly: $0.42 NZD

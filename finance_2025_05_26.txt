@@ -1,0 +1,8 @@
+***** Personal Finance Calculations *****
+Generated: 26/05/2025
+
+Here is your calculation history (oldest to newest)...
+
+[26/05/2025] Loan: Amount: $15,000.00 NZD, Rate: 8.5%, Term: 5 years → Monthly: $307.75 NZD
+[26/05/2025] Mortgage: Home: $6,500,000.00 NZD, Down: $300,000.00 NZD, Rate: 8.0% → Monthly: $129,330.31 NZD, LVR: 95.4%
+[26/05/2025] Investment: Initial: $1,000.00 NZD, Annual: $6,000.00 NZD, Return: 7.0%, Period: 50 years → Final: $1,284,054.26 NZD

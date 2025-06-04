@@ -218,7 +218,7 @@ def calculate_investment_growth_nz(initial_investment, annual_contribution, annu
 def calculate_kiwisaver_retirement(current_age, retirement_age, current_balance, annual_salary,
                                    employee_rate=3, expected_return=5, salary_growth=2):
     """
-    Calculate KiwiSaver retirement projection
+    Calculate KiwiSaver retirement projection - FIXED VERSION
 
     Args:
         current_age: Current age
@@ -232,34 +232,67 @@ def calculate_kiwisaver_retirement(current_age, retirement_age, current_balance,
     Returns:
         dict: KiwiSaver retirement projection
     """
-    years_to_retirement = retirement_age - current_age
-    return_rate = expected_return / 100
-    growth_rate = salary_growth / 100
+    try:
+        # Ensure all inputs are proper numbers and convert to appropriate types
+        current_age = float(current_age)
+        retirement_age = float(retirement_age)
+        current_balance = float(current_balance)
+        annual_salary = float(annual_salary)
+        employee_rate = float(employee_rate)
+        expected_return = float(expected_return)
+        salary_growth = float(salary_growth)
 
-    # Calculate KiwiSaver balance at retirement
-    balance = current_balance
-    current_salary = annual_salary
+        # Calculate years to retirement as integer
+        years_to_retirement = int(retirement_age - current_age)
 
-    for year in range(years_to_retirement):
-        # Calculate contributions for this year
-        kiwisaver_contrib = calculate_kiwisaver_contributions(current_salary, employee_rate / 100)
-        annual_contribution = kiwisaver_contrib['total_annual_contribution']
+        # Validate inputs
+        if years_to_retirement <= 0:
+            raise ValueError("Retirement age must be greater than current age")
+        if years_to_retirement > 70:  # Reasonable upper limit
+            raise ValueError("Years to retirement exceeds reasonable limit")
+        if current_balance < 0 or annual_salary < 0:
+            raise ValueError("Negative values not allowed")
+        if expected_return < -100 or expected_return > 100:
+            raise ValueError("Return rate must be between -100% and 100%")
 
-        # Grow existing balance and add contributions
-        balance = balance * (1 + return_rate) + annual_contribution
+        return_rate = expected_return / 100
+        growth_rate = salary_growth / 100
 
-        # Grow salary for next year
-        current_salary *= (1 + growth_rate)
+        # Calculate KiwiSaver balance at retirement
+        balance = current_balance
+        current_salary = annual_salary
 
-    # NZ Super estimate (April 2024 rates - married couple)
-    nz_super_annual = 26364  # Approximate annual NZ Super for married couple after tax
+        for year in range(years_to_retirement):
+            # Calculate contributions for this year
+            kiwisaver_contrib = calculate_kiwisaver_contributions(current_salary, employee_rate / 100)
+            annual_contribution = kiwisaver_contrib['total_annual_contribution']
 
-    # 4% withdrawal rule for retirement savings to last ~30 years
-    sustainable_withdrawal = balance * 0.04
+            # Grow existing balance and add contributions
+            balance = balance * (1 + return_rate) + annual_contribution
 
-    return {
-        'projected_balance': balance,
-        'annual_nz_super': nz_super_annual,
-        'sustainable_annual_withdrawal': sustainable_withdrawal,
-        'years_to_retirement': years_to_retirement
-    }
+            # Grow salary for next year
+            current_salary *= (1 + growth_rate)
+
+            # Prevent infinite numbers
+            if balance > 1e15:  # 1 quadrillion limit
+                raise ValueError("Calculation resulted in unreasonably large number")
+
+        # NZ Super estimate (April 2024 rates - married couple)
+        nz_super_annual = 26364  # Approximate annual NZ Super for married couple after tax
+
+        # 4% withdrawal rule for retirement savings to last ~30 years
+        sustainable_withdrawal = balance * 0.04
+
+        return {
+            'projected_balance': balance,
+            'annual_nz_super': nz_super_annual,
+            'sustainable_annual_withdrawal': sustainable_withdrawal,
+            'years_to_retirement': years_to_retirement
+        }
+
+    except (ValueError, TypeError, OverflowError, ZeroDivisionError) as e:
+        # Re-raise with more specific error message
+        raise ValueError(f"KiwiSaver calculation error: {str(e)}")
+    except Exception as e:
+        # Catch any other unexpected errors
+        raise ValueError(f"Unexpected calculation error: {str(e)}")
